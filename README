@@ -1,0 +1,51 @@
+This patch gives U calculation ability to OpenMX 3.8.
+
+You can estimate U and alpha values with OpenMX and this patch.
+
+
+-= Installation =-
+You should apply patch 3.8.5 in advance.
+Copy all code files (extension of .c and .h) of this patch to your OpenMX3.8 sourch directory. (Edit makefile before you install. Refer to makefile in this patch or copy and edit it in consistent with your system)
+Then type 'make install' as ordinary OpenMX installation.
+
+
+-= Newly added keywords =-
+scf.alpha      		on/off	(default: off)
+			activation of the calculation process of U and alpha
+
+scf.alpha.atom		integer (default: 1)
+			number of your target atom
+
+scf.alpha.l		integer (default: 2)
+			target orbital angular moment number (0 for s, 1 for p, 2 for d, 3 for f)
+
+scf.alpha.LONupFactor	double (default: 3.0)
+			localized orbital number increasing factor (to be explained later)
+
+scf.alpha.LONupFdecay	double (default: 0.01)
+			decaying factor of the above parameter (to be explained later)
+
+
+-= OpenMX keywords to be considered =-
+scf.Hubbard.U	      It has to be set 'on'.
+
+scf.SpinPolarization  It has to be set 'on'.
+
+scf.energycutoff      A number higher than 300 (Ry) is recommended.
+
+scf.EigenvalueSolver  You must choose 'cluster'.
+
+Hubbard.U.values      You should set a U value for your target orbital.
+
+
+-= Estimation of U =-
+You should set a U value for your target orbital in advance.
+After calculation, find the output U value in the standard output.
+Adjust your input U value and recalculate your output U value until your input U value is adequately close to your output U value.
+If a warning message is shown, your output U value might be inacurate.
+
+
+-= Recommendation =-
+Serial or OpenMP calculation is recommended. You'd better not use MPI for accurate estimation of U.
+
+If your calculated U value is too sensitive to geometry or your input U value, change the value of scf.alpha.LONupFactor into 1.0 or 5.0 or increase scf.energycutoff. If still sensitve, take an average of your U values whose input and output values are close.
