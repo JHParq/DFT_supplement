@@ -5,13 +5,14 @@ You can estimate U and alpha values with OpenMX and this patch.
 
 -= Installation =-
 You should apply patch 3.8.5 in advance.
-Copy all code files (extension of .c and .h) of this patch to your OpenMX3.8 sourch directory. (Edit makefile before you install. Refer to makefile in this patch or copy and edit it in consistent with your system)
+Copy all code files (extensions of .c and .h) of this patch to your OpenMX3.8 sourch directory. (Edit makefile before you install. Refer to makefile in this patch or copy and edit it in consistent with your system)
 Then type 'make install' as ordinary OpenMX installation.
 
 
 -= Newly added keywords =-
 scf.alpha      		on/off	(default: off)
 			activation of the calculation process of U and alpha
+			MD or relaxation is disabled when it is on.
 
 scf.alpha.atom		integer (default: 1)
 			number of your target atom
@@ -20,10 +21,10 @@ scf.alpha.l		integer (default: 2)
 			target orbital angular moment number (0 for s, 1 for p, 2 for d, 3 for f)
 
 scf.alpha.LONupFactor	double (default: 3.0)
-			localized orbital number increasing factor (to be explained later)
+			localized orbital number increasing factor (to be explained below)
 
 scf.alpha.LONupFdecay	double (default: 0.01)
-			decaying factor of the above parameter (to be explained later)
+			decaying factor of the above parameter (to be explained below)
 
 
 -= OpenMX keywords to be considered =-
@@ -33,7 +34,7 @@ scf.SpinPolarization  It has to be set 'on'.
 
 scf.energycutoff      A number higher than 300 (Ry) is recommended.
 
-scf.EigenvalueSolver  You must choose 'cluster'.
+scf.EigenvalueSolver  You must choose 'cluster' in the current version.
 
 Hubbard.U.values      You should set a U value for your target orbital.
 
