@@ -490,7 +490,7 @@ void Input_std(char *file)
     printf("MD_IterNumber=%i should be over 0.\n",MD_IterNumber);
     po++;
   }
-  else if (alpha_calc) { // added by Parq May/2017
+  else if (alpha_calc) { // added by Parq
     MD_IterNumber = 1;
     printf("No MD for U calculation\n");
   } // until here
@@ -628,6 +628,14 @@ void Input_std(char *file)
   if (Solver==6){
     if (myid==Host_ID){
       printf("The GDC method is not supported anymore.\n");
+    }
+    MPI_Finalize();
+    exit(0);
+  }
+
+  if (Solver!=2 && alpha_calc){
+    if (myid==Host_ID){
+      printf("Calculation of U is available only for the cluster solver in the current version\n");
     }
     MPI_Finalize();
     exit(0);
