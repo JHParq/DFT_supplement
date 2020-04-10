@@ -88,6 +88,7 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
   double oph, opxc, Ulo[2];
   double opx;
   double sie,denom; // sie = self-interaction energy
+  double contrib;   // contribution
   double alpha_h,alpha_xc,average;
   double coe0,coe1,U_eff;
   double **a_target_Uh, **a_target_Uxc;   // average asymmetric
@@ -1802,8 +1803,10 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
 
 	  MPI_Barrier(mpi_comm_level1);
 
-	  if ((upperb > 1e-14 && tp < 0.5*lop[i]) || sie < 1e-14) po = 0;    // to reduce computational time and errors
-	  else if ((tp*sie > aupperb && count>0) || sie <= upperb) {
+	  contrib = tp*sie;
+
+	  if ((upperb > 1e-14 && tp < 0.5*lop[i]) || contrib < cco) po = 0;    // to reduce computational time and errors
+	  else if ((contrib > aupperb && count>0) || sie <= upperb) {
 
 	    if (loop_count>0) {
 	      U_t[SizeOrder[count+1]] = -U_t[SizeOrder[count+1]];

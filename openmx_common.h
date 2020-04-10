@@ -2506,6 +2506,10 @@ int alpha_calc,alpha_OCC;
 int target_atom;
 int target_l[2];
 
+double lonif;       // Localized orbital number increasing factor
+double lonif_decay;
+double cco;         // contribution cut-off
+
 double *LOD_Grid_B;
 double *LOSD_Grid_B;
 /* added by Parq until here*/

@@ -188,7 +188,8 @@ void Input_std(char *file)
   input_logical("scf.alpha",&alpha_calc,0);
   input_int("scf.alpha.atom",&target_atom,1);
   input_double("scf.alpha.LONupFactor",&lonif,(double)3.0);
-  input_double("scf.alpha,LONupFdecay",&lonif_decay,(double)0.01);
+  input_double("scf.alpha.LONupFdecay",&lonif_decay,(double)0.01);
+  input_double("scf.alpha.SIECcutoff",&cco, (double)1e-9);
   input_int("scf.alpha.l",&target_l[0],2);
 
   input_int("scf.alpha.ll",&target_l[1],-1);
@@ -490,7 +491,7 @@ void Input_std(char *file)
     printf("MD_IterNumber=%i should be over 0.\n",MD_IterNumber);
     po++;
   }
-  else if (alpha_calc) { // added by Parq
+  else if (alpha_calc) { // added by Parq May/2017
     MD_IterNumber = 1;
     printf("No MD for U calculation\n");
   } // until here
@@ -633,13 +634,13 @@ void Input_std(char *file)
     exit(0);
   }
 
-  if (Solver!=2 && alpha_calc){
+  if (Solver!=2 && alpha_calc){  // added by Parq
     if (myid==Host_ID){
       printf("Calculation of U is available only for the cluster solver in the current version\n");
     }
     MPI_Finalize();
     exit(0);
-  }
+  }  // until here
 
   /* default=dstevx */
   s_vec[0]="dstevx"; s_vec[1]="dstegr"; s_vec[2]="dstedc"; s_vec[3]="dsteqr"; 
@@ -722,7 +723,7 @@ void Input_std(char *file)
     }
     MPI_Finalize();
     exit(1);
-  }
+  }  // until here
 
   /* scf.Constraint.NC.Spin */
 
