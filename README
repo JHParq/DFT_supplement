@@ -52,4 +52,4 @@ If a warning message is shown, your output U value might be inacurate.
 -= Recommendation =-
 Serial or OpenMP calculation is recommended. You'd better not use MPI for accurate estimation of U.
 
-If your calculated U value is too sensitive to geometry or your input U value, change the value of scf.alpha.LONupFactor into 1.0 or 5.0 or increase scf.energycutoff. If still sensitve, take an average of your U values whose input and output values are close.
+If your calculated U value is too sensitive to geometry or your input U value, change the value of scf.alpha.LONupFactor into 1.0 or 5.0 or change scf.alpha.LONupFdecay as 0.1 or 0.001 or increase scf.energycutoff. If still sensitve, take an average of your U values whose input and output values are close.
