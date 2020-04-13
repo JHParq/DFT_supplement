@@ -189,7 +189,7 @@ void Input_std(char *file)
   input_int("scf.alpha.atom",&target_atom,1);
   input_double("scf.alpha.LONupFactor",&lonif,(double)3.0);
   input_double("scf.alpha.LONupFdecay",&lonif_decay,(double)0.01);
-  input_double("scf.alpha.SIECcutoff",&cco, (double)1e-9);
+  input_double("scf.alpha.SIECcutoff",&cco, (double)1e-7);
   input_int("scf.alpha.l",&target_l[0],2);
 
   input_int("scf.alpha.ll",&target_l[1],-1);

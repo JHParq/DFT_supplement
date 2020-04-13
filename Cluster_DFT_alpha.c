@@ -6,7 +6,7 @@
 
   Log of Cluster_DFT_Dosout.c:
 
-     Feb/2020  Released by J.Parq
+     Apr/2020  Released by J.Parq
 
 ***********************************************************************/
 

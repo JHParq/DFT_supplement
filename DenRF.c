@@ -7,7 +7,7 @@
 
   Log of DenRF.c:
 
-     May/2015  Released by J.Parq
+     Mar/2020  Released by J.Parq
 
 ***********************************************************************/
 
