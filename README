@@ -26,7 +26,7 @@ scf.alpha.LONupFactor	double (default: 3.0)
 scf.alpha.LONupFdecay	double (default: 0.01)
 			decaying factor of the above parameter (to be explained below)
 
-scf.alpha.SIECcutoff	double (default: 1e-9)
+scf.alpha.SIECcutoff	double (hartree. default: 1e-7)
 			SIE contribution cutoff. Increasing this reduces computational time, but consider accuracy.
 
 
