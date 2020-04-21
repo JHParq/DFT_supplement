@@ -1,12 +1,12 @@
 /**********************************************************************
   Cluster_DFT_alpha.c:
 
-     Cluster_DFT_alpha.c is a subroutine to calulate the alpha
+     Cluster_DFT_alpha.c is a subroutine to calulate the alpha and the U
      based on cluster calculations
 
-  Log of Cluster_DFT_Dosout.c:
+  Log of Cluster_DFT_alpha.c:
 
-     Apr/2020  Released by J.Parq
+     Feb/2020  Released by J.Parq
 
 ***********************************************************************/
 
@@ -93,11 +93,9 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
   double coe0,coe1,U_eff;
   double **a_target_Uh, **a_target_Uxc;   // average asymmetric
 
-  char buf1[fp_bsize];          /* setvbuf */
-  char buf2[fp_bsize];          /* setvbuf */
-  char buf3[fp_bsize];          /* setvbuf */
-  /*  char file_eig[YOUSO10],file_ev[YOUSO10];
-      FILE *fp_eig, *fp_ev; */
+  char buf[fp_bsize];          /* setvbuf */
+  char file_U[YOUSO10];
+  FILE *fp_U;
   int numprocs,myid,ID,tag;
   MPI_Status stat;
   MPI_Request request;
@@ -246,6 +244,7 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
 
     firsttime = 0;
   }
+
 
   /****************************************************
               setting a_target_Uh & a_target_Uxc
@@ -776,6 +775,21 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
   opxc = 0.0;
   denom = 0.0;
 
+  /* preparing to write the output file */
+  if (myid==Host_ID){
+
+    sprintf(file_U,"%s%s.U",filepath,filename);
+
+    if ( (fp_U=fopen(file_U,"w"))==NULL ) {
+
+#ifdef xt3
+      setvbuf(fp_U,buf,_IOFBF,fp_bsize);  /* setvbuf */
+#endif
+
+      printf("can not open a file %s\n",file_U);
+    }
+  }
+
   for (spin=0; spin<=SpinP_switch; spin++){
 
     tosp = 0.0;
@@ -1054,6 +1068,7 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
 
     if (myid==Host_ID) {
       printf(" %d %d  %e %e %e\n",nlo,nm,Ccutoff,upperb,lowerb); 
+      fprintf(fp_U," %d %d  %e %e %e\n",nlo,nm,Ccutoff,upperb,lowerb); 
       for (j=0; j<nlo; j++) printf(" %lf %d ",lop[j],bphase[j][nm]);
       printf("\n");
     }
@@ -1548,8 +1563,12 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
     } /* while */
 
     if (myid==Host_ID) {
-      for (j=0; j<nlo; j++) printf(" %lf %d ",lop0[j],bphase[j][nm]);
+      for (j=0; j<nlo; j++) {
+	printf(" %lf %d ",lop0[j],bphase[j][nm]);
+	fprintf(fp_U," %lf %d ",lop0[j],bphase[j][nm]);
+      }
       printf("...\n");
+      fprintf(fp_U,"\n");
     }
 
     /* just for safety */
@@ -1848,6 +1867,12 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
 	  }
 	}
 
+	if (myid==Host_ID) {
+	  /* writing d orbital components of b */
+	  for (m1=0; m1<nm; m1++) fprintf(fp_U,"%d %lf ",bphase[i][m1],b[k][noA+m1]);
+	  fprintf(fp_U,"%d lop0[%d]=%lf (%lf) SIE=%lf\n",bphase[i][nm],i,lop0[i],tp,sie); 
+	}
+
 	if (upperb > 1e-14) {
 	  if (alpha_OCC) {
 	    oph += loph*copplo;
@@ -1889,13 +1914,18 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
 	  denom += aupperb;
 	}
 
-	if (myid==Host_ID) printf(" [%lf %lf wp=%lf] %lf\n",loph,lopxc,lop[i],sdr);
-
+	if (myid==Host_ID) {
+	  printf(" [%lf %lf wp=%lf]\n",loph,lopxc,lop[i]);
+	  fprintf(fp_U," [%lf %lf wp=%lf]\n",loph,lopxc,lop[i]);
+	}
       } /* if (lop[i]>1e-14) */
 
     } /* i */
 
-    if (myid==Host_ID) printf("  spin = %lf\n",tosp);    
+    if (myid==Host_ID) {
+      printf("  spin = %lf\n",tosp);    
+      fprintf(fp_U,"  spin = %lf\n",tosp);    
+    }
 
   } /* spin */
 
@@ -1926,11 +1956,21 @@ void Cluster_DFT_alpha( int SpinP_switch,  double *****nh, double ****CntOLP, do
       printf("%lf   %lf\n",oph,opxc);
 
       printf("[l=%d, mul=%d] alpha_H: %lf   alpha_XC: %lf\n",tl,i1,alpha_h,alpha_xc);
-    }
-    printf(" Average alpha: %lf    U_eff = %lf eV\n",average,U_eff);
+      printf(" Average alpha: %lf    U_eff = %lf eV\n\n",average,U_eff);
 
-    if (myid==Host_ID) printf("\n");
+      fprintf(fp_U,"\n");
+      fprintf(fp_U,"%lf   ",top);
+      fprintf(fp_U,"%lf   %lf    ",a_target_Uh[i][nm],a_target_Uxc[i][nm]);
+      fprintf(fp_U,"%lf   ",denom);
+      fprintf(fp_U,"%lf   %lf\n",oph,opxc);
+
+      fprintf(fp_U,"[l=%d, mul=%d] alpha_H: %lf   alpha_XC: %lf\n",tl,i1,alpha_h,alpha_xc);
+      fprintf(fp_U," Average alpha: %lf    U_eff = %lf eV\n\n",average,U_eff);
+    }
+
   } /* i */
+
+  if (myid==Host_ID) fclose(fp_U);
 
   /****************************************************
                           Free

@@ -47,6 +47,7 @@ You should set a U value for your target orbital in advance.
 After calculation, find the output U value in the standard output.
 Adjust your input U value and recalculate your output U value until your input U value is adequately close to your output U value.
 If a warning message is shown, your output U value might be inacurate.
+Your result will be also written in the file '***.U' (***: your OpenMX material system name).
 
 
 -= Recommendation =-
