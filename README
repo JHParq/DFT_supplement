@@ -49,6 +49,8 @@ Adjust your input U value and recalculate your output U value until your input U
 If a warning message is shown, your output U value might be inacurate.
 Your result will be also written in the file '***.U' (***: your OpenMX material system name).
 
+-= Caution =-
+Force calculation becomes inaccurate with the calculation of U by this patch. MD or relaxation is forced to be turned off during the U estimation.
 
 -= Recommendation =-
 Serial or OpenMP calculation is recommended. You'd better not use MPI for accurate estimation of U.
